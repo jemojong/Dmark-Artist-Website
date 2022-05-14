@@ -1,0 +1,38 @@
+{% extends 'base_layout.html'%}
+{% load l10n %}
+
+{% block content %}
+    <div>
+        <a href="{% url 'artists_details'%}">Back</a>
+        <p>Total_amount : {{total_amount}}</p>
+        <p>Total_Downloads : {{total_downloads}}</p>
+    </div>
+    <table class="table table-bordered table-hover">
+        <thead>
+          <tr>
+              <th>Artists</th>
+              <th>Downloads</th>
+              <th>Song title</th>
+              <th>Month</th>
+              <th>Year</th>
+              <th>Rate</th>
+              <th>Total</th>
+              <th>Company</th>       
+          </tr>
+        </thead>
+        {% for song in song_title %}
+        <tbody>
+          <tr>
+            <td>{{song.artist}}</td>
+            <td>{{song.downloads}}</td>
+            <td>{{song.song}}</td>
+            <td>{{song.month}}</td>
+            <td>{{song.year|unlocalize }}</td>
+            <td>{{song.price}}</td>
+            <td>{{song.total_amount}}</td>
+            <td>{{song.company}}</td>
+          </tr>
+        </tbody>
+        {% endfor %}
+      </table>
+{% endblock %}

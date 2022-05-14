@@ -1,0 +1,39 @@
+{% extends 'base_layout.html'%}
+
+{% block content %}
+<div>
+  <td><button class="btn btn-outline-success btn-sm"><a href="{% url 'sign_up' %}"> Add New User</a></button></td>
+    
+</div>
+<div>
+  <form action="" method="GET">
+      <input type="text" name="user">
+      <button class="btn btn-success btn-sm">Search</button>
+  </form>
+</div>
+        <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Email</th>
+                <th>Artist</th>
+              </tr>
+            </thead>
+            {% for user in page_obj %}
+            <tbody>
+              <tr>
+                    <td><a href="{% url 'user_details_admin' pk=user.user.id %}">{{user.user}}</a></td>
+                    <td>{{user.email}}</td>
+                    <td>{{user.artist_name}}</td>
+                    <td><button class="btn btn-outline-danger btn-sm"><a href="{% url 'deleter_user' pk=user.user.id %}">Delete</a></button></td>
+                    <td><button class="btn btn-outline-success btn-sm"><a href="{% url 'update_user' pk=user.user.id %}">Update</a></button></td>
+                    
+                    
+                    
+              </tr>
+            </tbody>
+            {% endfor %}
+          </table>
+  
+          
+{% endblock %}

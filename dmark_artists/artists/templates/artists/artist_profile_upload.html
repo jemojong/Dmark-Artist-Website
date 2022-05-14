@@ -1,0 +1,15 @@
+{% extends 'base_layout.html' %}
+{% block content %}
+{% if messages %}
+    {% for message in messages %}
+    <div>
+        <strong>{{ message|safe}}</strong>
+    </div>
+    {% endfor %}
+{% endif %}
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" class="btn btn-success" value="Submit">
+</form>
+{% endblock %}

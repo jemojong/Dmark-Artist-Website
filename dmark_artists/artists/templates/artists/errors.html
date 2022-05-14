@@ -1,0 +1,77 @@
+{% extends 'base_layout.html'%}
+
+{% block content %}
+{% if messages %}
+    {% for message in messages %}
+    <div>
+        <strong>{{ message|safe}}</strong>
+    </div>
+    {% endfor %}
+{% endif %}
+for title in title_list_names:
+            return title.alias
+
+
+def upload_data(request):
+    if request.method == 'GET':
+        form = ArtistProfileBulkUploadForm()
+        return render(request,'artists/artist_profile_upload.html', {'form':form})
+
+    # If not GET method then proceed
+    try:
+        form = ArtistProfileBulkUploadForm(data=request.POST, files=request.FILES)
+        if form.is_valid():
+            csv_file = form.cleaned_data['csv_file']
+            if not csv_file.name.endswith('.csv'):
+                messages.error(request, 'File is not CSV type')
+                return redirect('upload_data')
+            # If file is too large
+            if csv_file.multiple_chunks():
+                messages.error(request, 'Uploaded file is too big (%.2f MB)' %(csv_file.size(1000*1000),))
+                return redirect('upload_data')
+
+            form.save()
+            paths=form.cleaned_data['csv_file']
+            # get the path of the file saved in the server
+            file_path = os.path.join(settings.BASE_DIR, str(paths))
+            print(file_path)
+            save_new_artists_profile_from_csv(file_path)
+            
+    except Exception as e:
+        logging.getLogger('error_logger').error('Unable to upload file. ' + repr(e))
+        messages.error(request, 'Unable to upload file. ' + repr(e))      
+    return redirect('artists_details')
+
+    def upload_data(request):
+    if request.method == 'GET':
+        form = ArtistProfileBulkUploadForm()
+        return render(request,'artists/artist_profile_upload.html', {'form':form})
+
+    # If not GET method then proceed
+    try:
+        form = ArtistProfileBulkUploadForm(data=request.POST, files=request.FILES)
+        if form.is_valid():
+            csv_file = form.cleaned_data['csv_file']
+            #if not csv_file.name.endswith('.csv'):
+                #messages.error(request, 'File is not CSV type')
+                #return redirect('upload_data')
+            # If file is too large
+            if csv_file.multiple_chunks():
+                messages.error(request, 'Uploaded file is too big (%.2f MB)' %(csv_file.size(1000*1000),))
+                return redirect('upload_data')
+
+            form.save()
+            paths=form.cleaned_data['csv_file']
+            # get the path of the file saved in the server
+            file_path = os.path.join(settings.BASE_DIR, str(paths))
+            print(file_path)
+            #save_new_artists_profile_from_csv(file_path)
+            
+    except Exception as e:
+        logging.getLogger('error_logger').error('Unable to upload file. ' + repr(e))
+        messages.error(request, 'Unable to upload file. ' + repr(e))      
+    return redirect('artists_details')
+    
+            
+        
+{% endblock %}

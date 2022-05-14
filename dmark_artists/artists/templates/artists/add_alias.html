@@ -1,0 +1,12 @@
+{% extends 'base_layout.html'%}
+
+{% block content %}
+<form action="{% url 'add_alias' %}" method="post">
+    {% csrf_token %}
+      {{ form }}
+      <button type="submit">Add</button>
+  </form>
+  <div>
+    <a href="{% url 'all_aliase' %}"> All aliase </a>
+</div>
+{% endblock %}

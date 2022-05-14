@@ -1,0 +1,68 @@
+{% extends 'base_layout.html'%}
+{% load l10n %}
+
+{% block content %}
+    <a href="{% url 'admin_page'%}">Back</a>
+    <div class="row justify-content-center my-1 ">
+        <p class="col">All Dmark Caller tunes </p>
+        <p class="col">Total  Amount : {{total_amount}}</p>
+        <p class="col">Total Downloads: {{total_downloads}}</p>
+    </div>
+    <div>
+        <form action="" method="GET">
+            <input type="text" name="song">
+            <button class="btn btn-outline-success">Search</button>
+        </form>
+    </div>
+    <div class="table-responsive-md">
+        <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                  <th>Artists</th>
+                  <th>Downloads</th>
+                  <th>Song title</th>
+                  <th>Month</th>
+                  <th>Year</th>
+                  <th>Rate</th>
+                  <th>Total</th>
+                  <th>Company</th>       
+              </tr>
+            </thead>
+            {% for song in page_obj %}
+            <tbody>
+              <tr>
+                <td><a href="{% url 'song_detail' slug=song.song %}">{{song.artist}}</a></td>
+                <td>{{song.downloads}}</td>
+                <td>{{song.song}}</td>
+                <td>{{song.month}}</td>
+                <td>{{song.year|unlocalize }}</td>
+                <td>{{song.price}}</td>
+                <td>{{song.total_amount}}</td>
+                <td>{{song.company}}</td>
+                <td><a href="{% url 'edit_artist_profile' pk=song.pk %}">Edit</a></td>
+                <td><a href="{% url 'deleter_caller_tune' pk=song.pk %}" class="text-danger">Delete</a></td>
+              </tr>
+            </tbody>
+            {% endfor %}
+        </table>
+    </div>
+    
+    <div>
+        <span>
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+    
+            <span>
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+    
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+    
+{% endblock %}

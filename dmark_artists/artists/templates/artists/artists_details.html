@@ -1,0 +1,88 @@
+{% extends 'base_layout.html'%}
+{% load l10n %}
+{% block content %}
+{% if messages %}
+    {% for message in messages %}
+    <div>
+        <strong>{{ message|safe}}</strong>
+    </div>
+    {% endfor %}
+{% endif %}
+    {% if not perms.user.is_superuser %}
+    <button class="btn btn-outline-success btn-sm"><a href="{% url 'export_pdf'%}">Download Report </a></button>
+    {% endif %}
+    {% if perms.user.is_superuser %}
+    <button class="btn btn-outline-primary btn-sm"><a href="{% url 'export_pdf_admin' pk=artist_name.pk%}">Admin download</a></button>
+    {% endif %}
+    <div>
+        <div class="row justify-content-center my-1">
+            <p class="col">Artist :{{artist_name}}</p>
+            <p class="col">Total  Amount : {{total_amount}}</p>
+            <p class="col">Total Downloads: {{total_downloads}}</p>
+        </div>
+    
+  </div> 
+      <div>
+      <a class="waves-effect waves-light btn-small" href="{% url 'month_detail' slug='January' %}">January</a>
+      <a class="waves-effect waves-light btn-small" href="{% url 'month_detail' slug='February' %}">February</a>
+      <a class="waves-effect waves-light btn-small" href="{% url 'month_detail' slug='March' %}">March</a>
+      <a class="waves-effect waves-light btn-small" href="{% url 'month_detail' slug='Aprill' %}">Aprill</a>
+      <a class="waves-effect waves-light btn-small" href="{% url 'month_detail' slug='May' %}">May</a>
+      <a class="waves-effect waves-light btn-small" href="{% url 'month_detail' slug='June' %}">June</a>
+      <a class="waves-effect waves-light btn-small" href="{% url 'month_detail' slug='July' %}">July</a>
+      <a class="waves-effect waves-light btn-small" href="{% url 'month_detail' slug='August' %}">August</a>
+      <a class="waves-effect waves-light btn-small" href="{% url 'month_detail' slug='September' %}">September</a>
+      <a class="waves-effect waves-light btn-small" href="{% url 'month_detail' slug='October' %}">October</a>
+      <a class="waves-effect waves-light btn-small" href="{% url 'month_detail' slug='November' %}">November</a>
+      <a class="waves-effect waves-light btn-small" href="{% url 'month_detail' slug='December' %}">December</a>
+      </div>
+      <div>
+        <a class="waves-effect waves-light btn-small" href="{% url 'company_detail' slug='MTN' %}">MTN</a>
+        <a class="waves-effect waves-light btn-small" href="{% url 'company_detail' slug='Airtel' %}">Airtel</a>
+      </div>
+      
+  <nav>
+    <div class="nav-wrapper">
+      <form action="" method="GET">
+        <div class="input-field">
+          <input id="search" type="search"name="song" required>
+          <button class="btn btn-outline-danger btn-sm">search</button>
+          
+        </div>
+      </form>
+    </div>
+  </nav>
+    <table class="table table-bordered table-hover" >
+        <thead>
+          <tr>
+              <th>Artists</th>
+              <th>Song title</th>
+              <th>Downloads</th>
+              <th>Rate</th>
+              <th>Total</th>
+              <th>Month</th>
+              <th>Year</th>
+              <th>Company</th>
+            </tr>
+          </thead>
+          {% for song in songs %}
+        <tbody>
+          <tr>
+            <td><a href="{% url 'song_detail' slug=song.song %}">{{song.artist}}</a></td>
+            <td>{{song.song}}</td>
+            <td>{{song.downloads}}</td>
+            <td>{{song.price}}</td>
+            <td>{{song.total_amount}}</td>
+            <td>{{song.month}}</td>
+            <td>{{song.year|unlocalize}}</td>
+            <td>{{song.company}}</td>
+          </tr>
+        </tbody>
+        {% endfor %}
+      </table>
+      <script>
+        $(document).ready(function(){
+           $('.dropdown-toggle').dropdown()
+       });
+   </script>
+{% endblock %}

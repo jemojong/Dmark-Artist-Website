@@ -1,0 +1,47 @@
+{% extends 'base_layout.html'%}
+
+{% block content %}
+
+<div >
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Update</button>
+       
+    </form>
+ 
+</div>
+{% endblock %}
+<!--
+ <input type="hidden" value="{{user.user.id}}">
+        <select name="action">
+            <option value="Update">Update</option>
+            <option value="Delete">Delete</option>
+        </select>
+        <input type="submit" value="Confirm Action">
+{% if request.pathinfo == 'update_user' %}
+<div >
+    <form method="PUT">
+        {% csrf_token %}
+ 
+        {{ form.as_p }}
+        <input type="hidden" value="{{user.user.id}}"
+        <input type="submit" value="Update">
+    </form>
+</div>
+{% endif %}
+
+
+{% if request.pathinfo == 'create_user' %}
+<div >
+    <form method="POST">
+        {% csrf_token %}
+ 
+        {{ form.as_p }}
+        <input type="submit" value="Create">
+    </form>
+</div>
+{% endif %}
+
+
+-->

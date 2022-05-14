@@ -1,0 +1,49 @@
+{% extends 'base_layout.html'%}
+
+{% block content %}
+<div>
+  <button class="btn btn-success"><a href="{% url 'add_alias' %}" class="text-white">Add aliase</a></button>
+  
+</div>
+<div>
+  <form action="" method="GET">
+      <input type="text" name="alias">
+      <button class="btn btn-success btn-sm">Search</button>
+  </form>
+</div>
+        <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Alias</th>
+              </tr>
+            </thead>
+            {% for aliase in page_obj %}
+            <tbody>
+              <tr>
+                    <td>{{aliase.user_profile}}</td>
+                    <td>{{aliase.alias}}</td>
+                    <td><button class="btn btn-outline-danger btn-sm"><a href="{% url 'deleter_aliase' slug=aliase.alias %}">Delete</a></button></td>
+                    
+                    
+              </tr>
+            </tbody>
+            {% endfor %}
+          </table>
+          <div>
+            <span>
+                {% if page_obj.has_previous %}
+                    <a href="?page=1">&laquo; first</a>
+                    <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                {% endif %}
+        
+                <span>
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                </span>
+        
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">next</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                {% endif %}
+            </
+{% endblock %}
