@@ -1,6 +1,6 @@
 from unicodedata import name
 from django.urls import path
-from .views import artists_details,company_detail,signup_view,login_view,month_detail,song_detail,add_alias,company_detail,upload_data,caller_tunes_view,export_csv,export_pdf,admin_page
+from .views import artists_details,company_detail,signup_view,login_view,user_logout,month_detail,song_detail,add_alias,company_detail,upload_data,caller_tunes_view,export_csv,export_pdf,admin_page
 from .views import user_s,deleter_user,Update_user,all_aliase,deleter_aliase,Edit_artist_profile,deleter_caller_tune,user_details_admin,export_pdf_admin
 from django.contrib.auth import views as auth_views
 
@@ -8,7 +8,7 @@ urlpatterns =[
     path('details/',artists_details,name="artists_details"),
     path('signup/',signup_view,name="sign_up"),
     path('login/',login_view,name="login_view"),
-    path('logout/',login_view,name="logout"),
+    path('logout/',user_logout,name="logout"),
     path('upload/',upload_data,name="upload_data"),
     path('month/',month_detail,name='month_detail'),
     path("download/", export_pdf,name='export_pdf'),

@@ -26,6 +26,7 @@ from django.template.loader import get_template
 from .utils import render_to_pdf
 from django.contrib.auth.models import User
 from django.views.generic.edit import UpdateView
+from django.contrib.postgres.search import SearchQuery,SearchVector,SearchRank
 # Create your views here.
 
 def signup_view(request):
@@ -59,8 +60,9 @@ def login_view(request):
         form = AuthenticationForm()
     return render(request,'artists/login_view.html',{"form":form})
 
-def logout(request):
-    logout
+@login_required
+def user_logout(request):
+    logout(request)
     return redirect('login_view')
 
 
@@ -167,21 +169,38 @@ def artists_details(request):
     query_search=None
     query_search = request.GET.get("song")
     if query_search is not None:
+        vector = SearchVector('song')
+        query=SearchQuery(query_search)
         song_list=[]
         for x in alias_list:
-            song_list.append(ArtistProfile.objects.filter(artist__startswith=x).filter(song__startswith=query_search))
+            song_list.append(ArtistProfile.objects.filter(artist__icontains=x).filter(song__icontains=query_search))
+            #song_list.append(ArtistProfile.objects.filter(artist__icontains=x).filter(song__unaccent__lower__trigram_similar=query_search))
+            #song_list.append(ArtistProfile.objects.annotate(search=vector).filter(search=query).filter(artist__icontains=x))
+            #song_list.append(ArtistProfile.objects.annotate(rank=SearchRank(vector, query)).order_by('-rank').filter(artist__startswith=x))
+            
+    
     else:
         song_list=[]
         for x in alias_list:
-            song_list.append(ArtistProfile.objects.filter(artist__startswith=x))
+            song_list.append(ArtistProfile.objects.filter(artist__icontains=x))
     song_list_2=[]
     for t in song_list:
         for x in t:
             song_list_2.append(x)
-    songs = sorted(song_list_2, key=lambda x: x.downloads, reverse=True)
+    
+    if query_search is not None:
+        songs=[]
+        for songs_query in song_list:
+            for s in songs_query:
+                songs.append(s)
+        total_amount = sum(song.total_amount for song in songs)
+        total_downloads = sum(song.downloads for song in songs)        
+    else:
+        songs = sorted(song_list_2, key=lambda x: x.downloads, reverse=True)
         #songs = ArtistProfile.objects.filter(artist__startswith=name).order_by('-downloads')
-    total_amount = sum(song.total_amount for song in songs)
-    total_downloads = sum(song.downloads for song in songs)
+        total_amount = sum(song.total_amount for song in songs)
+        total_downloads = sum(song.downloads for song in songs)
+    
     artist_name = username
     return render(request,'artists/artists_details.html',{'total_amount':total_amount,'artist_name':artist_name,'songs':songs,'total_downloads':total_downloads})
 
@@ -198,7 +217,7 @@ def month_detail(request,slug):
         alias_list.append(aliase.alias)
     song_list=[]
     for x in alias_list:
-        song_list.append(ArtistProfile.objects.filter(artist__startswith=x).filter(month=slug))
+        song_list.append(ArtistProfile.objects.filter(artist__icontains=x).filter(month=slug))
     song_list_2=[]
     for t in song_list:
         for x in t:
@@ -235,7 +254,7 @@ def company_detail(request,slug):
         alias_list.append(aliase.alias)
     song_list=[]
     for x in alias_list:
-        song_list.append(ArtistProfile.objects.filter(artist__startswith=x).filter(company=slug))
+        song_list.append(ArtistProfile.objects.filter(artist__icontains=x).filter(company=slug))
     song_list_2=[]
     for t in song_list:
         for x in t:
@@ -264,7 +283,7 @@ def caller_tunes_view(request):
     query_search=None
     query_search = request.GET.get("song")
     if query_search is not None:
-        song_list=ArtistProfile.objects.filter(song__startswith=query_search).order_by('-downloads')
+        song_list=ArtistProfile.objects.filter(song__icontains=query_search).order_by('-downloads')
         #print(song_list)
         paginator = Paginator(song_list,30)
         page_number = request.GET.get('page')
@@ -312,11 +331,11 @@ def export_pdf(request, *args, **kwargs):
     if query_search is not None:
         song_list=[]
         for x in alias_list:
-            song_list.append(ArtistProfile.objects.filter(artist__startswith=x).filter(song__startswith=query_search))
+            song_list.append(ArtistProfile.objects.filter(artist__icontains=x).filter(song__icontains=query_search))
     else:
         song_list=[]
         for x in alias_list:
-            song_list.append(ArtistProfile.objects.filter(artist__startswith=x))
+            song_list.append(ArtistProfile.objects.filter(artist__icontains=x))
     song_list_2=[]
     for t in song_list:
         for x in t:
@@ -358,11 +377,11 @@ def export_pdf_admin(request,pk, *args, **kwargs):
     if query_search is not None:
         song_list=[]
         for x in alias_list:
-            song_list.append(ArtistProfile.objects.filter(artist__startswith=x).filter(song__startswith=query_search))
+            song_list.append(ArtistProfile.objects.filter(artist__icontains=x).filter(song__icontains=query_search))
     else:
         song_list=[]
         for x in alias_list:
-            song_list.append(ArtistProfile.objects.filter(artist__startswith=x))
+            song_list.append(ArtistProfile.objects.filter(artist__icontains=x))
     song_list_2=[]
     for t in song_list:
         for x in t:
@@ -399,7 +418,7 @@ def user_s(request):
     query_search=None
     query_search = request.GET.get("user")
     if query_search is not None:
-        search_user=UserProfile.objects.filter(artist_name__startswith=query_search)
+        search_user=UserProfile.objects.filter(artist_name__icontains=query_search)
         #print(song_list)
         paginator = Paginator(search_user,30)
         page_number = request.GET.get('page')
@@ -435,7 +454,7 @@ def all_aliase(request):
     query_search=None
     query_search = request.GET.get("alias")
     if query_search is not None:
-        all_aliase=ArtistAlias.objects.filter(alias__startswith=query_search)
+        all_aliase=ArtistAlias.objects.filter(alias__icontains=query_search)
         #print(song_list)
         paginator = Paginator(all_aliase,30)
         page_number = request.GET.get('page')
@@ -491,11 +510,11 @@ def user_details_admin(request,pk):
     if query_search is not None:
         song_list=[]
         for x in alias_list:
-            song_list.append(ArtistProfile.objects.filter(artist__startswith=x).filter(song__startswith=query_search))
+            song_list.append(ArtistProfile.objects.filter(artist__icontains=x).filter(song__icontains=query_search))
     else:
         song_list=[]
         for x in alias_list:
-            song_list.append(ArtistProfile.objects.filter(artist__startswith=x))
+            song_list.append(ArtistProfile.objects.filter(artist__icontains=x))
     song_list_2=[]
     for t in song_list:
         for x in t:
