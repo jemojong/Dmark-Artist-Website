@@ -9,37 +9,26 @@
     {% endfor %}
 {% endif %}
     {% if not perms.user.is_superuser %}
-    <button class="btn btn-outline-success btn-sm"><a href="{% url 'export_pdf'%}">Download Report </a></button>
+    <a href="{% url 'export_csv'%}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+      class="fas fa-download fa-sm text-white-50"></i> Download Report CSV </a>
+      <a href="{% url 'export_pdf'%}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+        class="fas fa-download fa-sm text-white-50"></i> Download Report PDF </a>
     {% endif %}
     {% if perms.user.is_superuser %}
-    <button class="btn btn-outline-primary btn-sm"><a href="{% url 'export_pdf_admin' pk=artist_name.pk%}">Admin download</a></button>
+    <a href="{% url 'export_csv_admin' pk=artist_name.pk%}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+      class="fas fa-download fa-sm text-white-50"></i> Admin download CSV </a>
+    <a href="{% url 'export_pdf_admin' pk=artist_name.pk%}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+      class="fas fa-download fa-sm text-white-50"></i> Admin download PDF </a>
     {% endif %}
+  
     <div>
         <div class="row justify-content-center my-1">
-            <p class="col">Artist :{{artist_name}}</p>
-            <p class="col">Total  Amount : {{total_amount}}</p>
-            <p class="col">Total Downloads: {{total_downloads}}</p>
+            <p class="h3 col">Artist :{{artist_name}}</p>
+            <p class="h3 col">Total  Amount : {{total_amount}}</p>
+            <p class="h3 col">Total Downloads: {{total_downloads}}</p>
         </div>
     
   </div> 
-      <div>
-      <a class="waves-effect waves-light btn-small" href="{% url 'month_detail' slug='January' %}">January</a>
-      <a class="waves-effect waves-light btn-small" href="{% url 'month_detail' slug='February' %}">February</a>
-      <a class="waves-effect waves-light btn-small" href="{% url 'month_detail' slug='March' %}">March</a>
-      <a class="waves-effect waves-light btn-small" href="{% url 'month_detail' slug='Aprill' %}">Aprill</a>
-      <a class="waves-effect waves-light btn-small" href="{% url 'month_detail' slug='May' %}">May</a>
-      <a class="waves-effect waves-light btn-small" href="{% url 'month_detail' slug='June' %}">June</a>
-      <a class="waves-effect waves-light btn-small" href="{% url 'month_detail' slug='July' %}">July</a>
-      <a class="waves-effect waves-light btn-small" href="{% url 'month_detail' slug='August' %}">August</a>
-      <a class="waves-effect waves-light btn-small" href="{% url 'month_detail' slug='September' %}">September</a>
-      <a class="waves-effect waves-light btn-small" href="{% url 'month_detail' slug='October' %}">October</a>
-      <a class="waves-effect waves-light btn-small" href="{% url 'month_detail' slug='November' %}">November</a>
-      <a class="waves-effect waves-light btn-small" href="{% url 'month_detail' slug='December' %}">December</a>
-      </div>
-      <div>
-        <a class="waves-effect waves-light btn-small" href="{% url 'company_detail' slug='MTN' %}">MTN</a>
-        <a class="waves-effect waves-light btn-small" href="{% url 'company_detail' slug='Airtel' %}">Airtel</a>
-      </div>
       
   <nav>
     <div class="nav-wrapper">
@@ -50,6 +39,7 @@
           
         </div>
       </form>
+      
     </div>
   </nav>
     <table class="table table-bordered table-hover" >

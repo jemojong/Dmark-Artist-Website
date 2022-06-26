@@ -1,9 +1,11 @@
 from unicodedata import name
 from django.urls import path
 from .views import artists_details,company_detail,signup_view,login_view,user_logout,month_detail,song_detail,add_alias,company_detail,upload_data,caller_tunes_view,export_csv,export_pdf,admin_page
-from .views import user_s,deleter_user,Update_user,all_aliase,deleter_aliase,Edit_artist_profile,deleter_caller_tune,user_details_admin,export_pdf_admin
+from .views import user_s,deleter_user,Update_user,all_aliase,deleter_aliase,Edit_artist_profile,deleter_caller_tune,user_details_admin,export_pdf_admin,export_csv_admin
 from django.contrib.auth import views as auth_views
 
+from django.conf import settings
+from django.conf.urls.static import static
 urlpatterns =[
     path('details/',artists_details,name="artists_details"),
     path('signup/',signup_view,name="sign_up"),
@@ -13,7 +15,8 @@ urlpatterns =[
     path('month/',month_detail,name='month_detail'),
     path("download/", export_pdf,name='export_pdf'),
     path("download_pdf/report/", export_csv,name='export_csv'),
-    path("admin_page/download_report/<int:pk>/", export_pdf_admin,name='export_pdf_admin'),
+    path("admin_page/download_pdf_report/<int:pk>/", export_pdf_admin,name='export_pdf_admin'),
+    path("admin_page/download_csv_report/<int:pk>/", export_csv_admin,name='export_csv_admin'),
     
     path("admin_page/", admin_page,name='admin_page'),
     path("admin_page/all_users/", user_s,name='user_s'),
@@ -27,9 +30,6 @@ urlpatterns =[
     path("admin_page/caller_tunes/edit/<int:pk>/",Edit_artist_profile.as_view(),name='edit_artist_profile'),
     path("admin_page/caller_tunes/delete/<int:pk>/", deleter_caller_tune,name='deleter_caller_tune'),
     
-
-
-    
     path('reset_password/',auth_views.PasswordResetView.as_view(template_name='artists/password_reset.html'),name="reset_password"),
     path('reset_password_sent/',auth_views.PasswordResetDoneView.as_view(template_name='artists/password_reset_sent.html'),name='password_reset_done'),
     path('reset/<uidb64>/<token>/',auth_views.PasswordResetConfirmView.as_view(template_name='artists/password_reset_form.html'),name="password_reset_confirm"),
@@ -38,4 +38,4 @@ urlpatterns =[
     path("<str:slug>/", month_detail,name='month_detail'),
     path("songdetail/<str:slug>/", song_detail,name='song_detail'),
     path("company/<str:slug>/", company_detail,name='company_detail'),
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

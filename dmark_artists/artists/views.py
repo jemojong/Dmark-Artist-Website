@@ -298,19 +298,92 @@ def caller_tunes_view(request):
         total_amount = song_list.aggregate(Sum('total_amount'))['total_amount__sum']
         total_downloads = song_list.aggregate(Sum('downloads'))['downloads__sum']
     return render(request,'artists/caller_tunes.html', {'page_obj': page_obj,'total_amount':total_amount,'total_downloads':total_downloads})
-
 @login_required
-def export_csv(request):
+def export_csv_all(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] ='attachement: filename=Report'+'.csv'
     writer = csv.writer(response)
     writer.writerow(['Artists','Song title','Downloads','Rate','Total','Month','Year','Company'])
+    
     profiles = ArtistProfile.objects.all()
     total_amount = profiles.aggregate(Sum('total_amount'))['total_amount__sum']
     total_downloads = profiles.aggregate(Sum('downloads'))['downloads__sum']
     for profile in profiles:
         writer.writerow((profile.artist,profile.song,profile.downloads,profile.price,profile.total_amount,profile.month,profile.year,profile.company))
     writer.writerow(['Artists','Song title',total_downloads,'Rate',total_amount,'Month','Year','Company'])
+    return response
+
+@login_required
+def export_csv(request):
+    
+    try:
+        username = UserProfile.objects.filter(artist_name = request.user)[0]
+        #title_list_names = username.user_artist.all()
+    except:
+        messages.error(request, 'Profile Not created')
+        return redirect('login_view')
+    response = HttpResponse(content_type='text/csv')
+    
+    response['Content-Disposition'] ='attachement: filename=f"{username}"'+'.csv'
+    writer = csv.writer(response)
+    writer.writerow(['Artists','Song title','Downloads','Rate','Total','Month','Year','Company'])
+    
+    aliases = ArtistAlias.objects.filter(user_profile=username.id)
+    alias_list =[]
+    for aliase in aliases:
+        alias_list.append(aliase.alias)
+    song_list=[]
+    for x in alias_list:
+        song_list.append(ArtistProfile.objects.filter(artist__icontains=x))
+    song_list_2=[]
+    for t in song_list:
+        for x in t:
+            song_list_2.append(x)
+    songs = sorted(song_list_2, key=lambda x: x.downloads, reverse=True)
+        #songs = ArtistProfile.objects.filter(artist__startswith=name).order_by('-downloads')
+    total_amount = sum(song.total_amount for song in songs)
+    total_downloads = sum(song.downloads for song in songs)
+    profiles=songs
+    for profile in profiles:
+        writer.writerow((profile.artist,profile.song,profile.downloads,profile.price,profile.total_amount,profile.month,profile.year,profile.company))
+    writer.writerow(['Total','Total',total_downloads,'Total',total_amount,'Total','Total','Total'])
+    return response
+
+@login_required
+def export_csv_admin(request,pk, *args, **kwargs):
+    try:
+        username = username = UserProfile.objects.get(pk = pk)
+        #title_list_names = username.user_artist.all()
+    except:
+        messages.error(request, 'Profile Not created')
+        return redirect('login_view')
+    
+    response = HttpResponse(content_type='text/csv')
+    
+    response['Content-Disposition'] ='attachement: filename=Report'+'.csv'
+    writer = csv.writer(response)
+    writer.writerow(['Artists','Song title','Downloads','Rate','Total','Month','Year','Company'])
+    
+    aliases = ArtistAlias.objects.filter(user_profile=username.id)
+    alias_list =[]
+    for aliase in aliases:
+        alias_list.append(aliase.alias)
+    song_list=[]
+    for x in alias_list:
+        song_list.append(ArtistProfile.objects.filter(artist__icontains=x))
+    song_list_2=[]
+    for t in song_list:
+        for x in t:
+            song_list_2.append(x)
+    songs = sorted(song_list_2, key=lambda x: x.downloads, reverse=True)
+        #songs = ArtistProfile.objects.filter(artist__startswith=name).order_by('-downloads')
+    total_amount = sum(song.total_amount for song in songs)
+    total_downloads = sum(song.downloads for song in songs)
+    artist_name = username
+    profiles=songs
+    for profile in profiles:
+        writer.writerow((profile.artist,profile.song,profile.downloads,profile.price,profile.total_amount,profile.month,profile.year,profile.company))
+    writer.writerow(['Total','Total',total_downloads,'Total',total_amount,'Total','Total','Total'])
     return response
 
 @login_required
