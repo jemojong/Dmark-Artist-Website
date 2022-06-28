@@ -1,8 +1,8 @@
-
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
-{% load static %}
+
 <head>
 
     <meta charset="utf-8">
@@ -22,10 +22,11 @@
     <!-- Custom styles for this template-->
     <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
 
+    <link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+
 </head>
-
 <body id="page-top">
-
+  
     <!-- Page Wrapper -->
     <div id="wrapper">
 
@@ -49,13 +50,17 @@
 
             <!-- Divider -->
             <hr class="sidebar-divider">
-
+            
+            {% if not perms.user.is_superuser %}
             <!-- Heading -->
             <div class="sidebar-heading">
                 Interface
             </div>
-
+           
+            
+        
             <!-- Nav Item - Pages Collapse Menu -->
+            
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                     aria-expanded="true" aria-controls="collapseTwo">
@@ -97,10 +102,11 @@
                     </div>
                 </div>
             </li>
-
+            
+            
             <!-- Divider -->
             <hr class="sidebar-divider">
-
+            {% endif %}
             <!-- Heading -->
             <div class="sidebar-heading">
                 Caller Tunes Details
@@ -192,14 +198,8 @@
                         </li>
 
                         <!-- Nav Item - Alerts -->
-                        {% load l10n %}
-                        {% if messages %}
-                            {% for message in messages %}
-                            <div>
-                                <strong>{{ message|safe}}</strong>
-                            </div>
-                            {% endfor %}
-                        {% endif %}
+                        
+                        
                         <!-- Nav Item - Messages -->
 
                         <div class="topbar-divider d-none d-sm-block"></div>
@@ -232,6 +232,7 @@
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
+            
                     
                     <!-- Content Row -->
                     {% if perms.user.is_superuser %}
@@ -321,6 +322,21 @@
                         </div>
                     </div>
                     {% endif %}
+                    
+                    <div class="input-group">
+                            
+                        <div class="input-group-append">
+                            {% load l10n %}
+                            {% if messages %}
+                                {% for message in messages %}
+                                    <div>
+                                        <p><strong class="text-danger">{{ message|safe}}</strong></p>
+                                        
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
                     <!-- Content Row -->
                     {% block content %}
 
@@ -385,10 +401,13 @@
 
     <!-- Page level plugins -->
     <script src="{% static 'vendor/chart.js/Chart.min.js' %}"></script>
+    <script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
 
     <!-- Page level custom scripts -->
     <script src="{% static 'js/demo/chart-area-demo.js' %}"></script>
     <script src="{% static 'js/demo/chart-pie-demo.js' %}"></script>
+    <script src="{% static 'js/demo/datatables-demo.js' %}"></script>
 
 </body>
 
