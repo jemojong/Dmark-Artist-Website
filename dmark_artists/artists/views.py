@@ -75,17 +75,17 @@ def save_new_artists_profile_from_csv(file_path):
             with open(file_path) as data_stream:
                 reader = csv.reader(data_stream, delimiter=",")
                 for index, row in enumerate(reader, 1):
-                    if index == 1:
+                    if index == 0:
                         continue
                     profiles=[
                     ArtistProfile(
-                    song = row[0],
-                    artist = row[1],
-                    price = row[2],
-                    downloads = row[3],
-                    total_amount = row[4],
-                    month =row[5],
-                    year =row[6],
+                    year =row[0],
+                    month =row[1],
+                    song = row[2],
+                    artist = row[3],
+                    downloads = row[4],
+                    price = row[5],
+                    total_amount = row[6],
                     company =row[7],
                 )] 
                     ArtistProfile.objects.bulk_create(profiles)
@@ -101,13 +101,13 @@ def save_new_artists_profile_from_csv(file_path):
                     continue
                 profiles=[
                 ArtistProfile(
-                    song = row[0],
-                    artist = row[1],
-                    price = row[2],
-                    downloads = row[3],
-                    total_amount = row[4],
-                    month =row[5],
-                    year =row[6],
+                    year =row[0],
+                    month =row[1],
+                    song = row[2],
+                    artist = row[3],
+                    downloads = row[4],
+                    price = row[5],
+                    total_amount = row[6],
                     company =row[7],
                     
                 )]
