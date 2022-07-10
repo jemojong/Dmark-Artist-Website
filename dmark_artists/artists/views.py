@@ -60,7 +60,7 @@ def login_view(request):
         form = AuthenticationForm()
     return render(request,'artists/login_view.html',{"form":form})
 
-@login_required
+@login_required(login_url='login_view')
 def user_logout(request):
     logout(request)
     return redirect('login_view')
